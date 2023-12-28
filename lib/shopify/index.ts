@@ -202,7 +202,6 @@ export async function createCart(): Promise<Cart> {
     query: createCartMutation,
     cache: 'no-store'
   });
-
   return reshapeCart(res.body.data.cartCreate.cart);
 }
 
@@ -230,7 +229,6 @@ export async function removeFromCart(cartId: string, lineIds: string[]): Promise
     },
     cache: 'no-store'
   });
-
   return reshapeCart(res.body.data.cartLinesRemove.cart);
 }
 
@@ -246,7 +244,6 @@ export async function updateCart(
     },
     cache: 'no-store'
   });
-
   return reshapeCart(res.body.data.cartLinesUpdate.cart);
 }
 
@@ -256,7 +253,6 @@ export async function getCart(cartId: string): Promise<Cart | undefined> {
     variables: { cartId },
     cache: 'no-store'
   });
-
   // Old carts becomes `null` when you checkout.
   if (!res.body.data.cart) {
     return undefined;
@@ -273,7 +269,6 @@ export async function getCollection(handle: string): Promise<Collection | undefi
       handle
     }
   });
-
   return reshapeCollection(res.body.data.collection);
 }
 
@@ -295,12 +290,10 @@ export async function getCollectionProducts({
       sortKey: sortKey === 'CREATED_AT' ? 'CREATED' : sortKey
     }
   });
-
   if (!res.body.data.collection) {
     console.log(`No collection found for \`${collection}\``);
     return [];
   }
-
   return reshapeProducts(removeEdgesAndNodes(res.body.data.collection.products));
 }
 
@@ -340,7 +333,6 @@ export async function getMenu(handle: string): Promise<Menu[]> {
       handle
     }
   });
-
   return (
     res.body?.data?.menu?.items.map((item: { title: string; url: string }) => ({
       title: item.title,
@@ -354,7 +346,6 @@ export async function getPage(handle: string): Promise<Page> {
     query: getPageQuery,
     variables: { handle }
   });
-
   return res.body.data.pageByHandle;
 }
 
@@ -362,7 +353,6 @@ export async function getPages(): Promise<Page[]> {
   const res = await shopifyFetch<ShopifyPagesOperation>({
     query: getPagesQuery
   });
-
   return removeEdgesAndNodes(res.body.data.pages);
 }
 
@@ -374,7 +364,6 @@ export async function getProduct(handle: string): Promise<Product | undefined> {
       handle
     }
   });
-
   return reshapeProduct(res.body.data.product, false);
 }
 
@@ -386,7 +375,6 @@ export async function getProductRecommendations(productId: string): Promise<Prod
       productId
     }
   });
-
   return reshapeProducts(res.body.data.productRecommendations);
 }
 
@@ -408,7 +396,6 @@ export async function getProducts({
       sortKey
     }
   });
-
   return reshapeProducts(removeEdgesAndNodes(res.body.data.products));
 }
 
@@ -422,7 +409,6 @@ export async function revalidate(req: NextRequest): Promise<NextResponse> {
   const secret = req.nextUrl.searchParams.get('secret');
   const isCollectionUpdate = collectionWebhooks.includes(topic);
   const isProductUpdate = productWebhooks.includes(topic);
-
   if (!secret || secret !== process.env.SHOPIFY_REVALIDATION_SECRET) {
     console.error('Invalid revalidation secret.');
     return NextResponse.json({ status: 200 });

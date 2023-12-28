@@ -1,11 +1,17 @@
 import clsx from 'clsx';
 import { Suspense } from 'react';
 
-import { getCollections } from 'lib/shopify';
+// import { getCollections } from 'lib/shopify';
+// import { getCollections } from 'lib/backendUtils';
+import { getCollections } from 'lib/cwcommerce';
+
 import FilterList from './filter';
 
 async function CollectionList() {
   const collections = await getCollections();
+  // const collections:[] = [];
+
+  console.log('collections called while seacrch================>', collections);
   return <FilterList list={collections} title="Collections" />;
 }
 

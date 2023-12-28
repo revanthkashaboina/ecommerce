@@ -1,4 +1,7 @@
-import { getCollection, getCollectionProducts } from 'lib/shopify';
+// import { getCollection, getCollectionProducts } from 'lib/shopify';
+// import { getCollection, getCollectionProducts } from 'lib/backendUtils';
+import { getCollection, getCollectionProducts } from 'lib/cwcommerce';
+
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
@@ -6,7 +9,9 @@ import Grid from 'components/grid';
 import ProductGridItems from 'components/layout/product-grid-items';
 import { defaultSort, sorting } from 'lib/constants';
 
-export const runtime = 'edge';
+// export const runtime = 'edge';
+
+export const runtime = 'nodejs';
 
 export async function generateMetadata({
   params
@@ -14,7 +19,6 @@ export async function generateMetadata({
   params: { collection: string };
 }): Promise<Metadata> {
   const collection = await getCollection(params.collection);
-
   if (!collection) return notFound();
 
   return {
@@ -34,13 +38,13 @@ export default async function CategoryPage({
   const { sort } = searchParams as { [key: string]: string };
   const { sortKey, reverse } = sorting.find((item) => item.slug === sort) || defaultSort;
   const products = await getCollectionProducts({ collection: params.collection, sortKey, reverse });
-
+  // console.log("in category products================>",products)
   return (
     <section>
       {products.length === 0 ? (
         <p className="py-3 text-lg">{`No products found in this collection`}</p>
       ) : (
-        <Grid className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        <Grid className="grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
           <ProductGridItems products={products} />
         </Grid>
       )}

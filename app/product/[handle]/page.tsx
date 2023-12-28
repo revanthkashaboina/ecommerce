@@ -7,11 +7,14 @@ import Footer from 'components/layout/footer';
 import { Gallery } from 'components/product/gallery';
 import { ProductDescription } from 'components/product/product-description';
 import { HIDDEN_PRODUCT_TAG } from 'lib/constants';
-import { getProduct, getProductRecommendations } from 'lib/shopify';
+// import { getProduct, getProductRecommendations } from 'lib/shopify';
+// import { getProduct } from 'lib/backendUtils';
+import { getProduct } from 'lib/cwcommerce';
 import { Image } from 'lib/shopify/types';
 import Link from 'next/link';
-
-export const runtime = 'edge';
+let domain = process.env.BACKEND_LIBRARY;
+// export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 export async function generateMetadata({
   params
@@ -26,8 +29,8 @@ export async function generateMetadata({
   const indexable = !product.tags.includes(HIDDEN_PRODUCT_TAG);
 
   return {
-    title: product.seo.title || product.title,
-    description: product.seo.description || product.description,
+    title: product?.seo?.title || product.title,
+    description: product?.seo?.description || product.description,
     robots: {
       index: indexable,
       follow: indexable,
@@ -53,9 +56,23 @@ export async function generateMetadata({
 
 export default async function ProductPage({ params }: { params: { handle: string } }) {
   const product = await getProduct(params.handle);
-
+  // console.log("product id for showing data===========>",params.handle)
+  // console.log("product------------->",product)
   if (!product) return notFound();
 
+  let proddetails: any;
+  if (domain === 'Shopify') {
+    proddetails = {
+      priceCurrency: product.priceRange.minVariantPrice.currencyCode,
+      highPrice: product.priceRange.maxVariantPrice.amount,
+      lowPrice: product.priceRange.minVariantPrice.amount
+    };
+  } else {
+    proddetails = {
+      priceCurrency: product.priceRange.maxVariantPrice.currencyCode,
+      highPrice: product.priceRange.maxVariantPrice.amount
+    };
+  }
   const productJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -67,9 +84,14 @@ export default async function ProductPage({ params }: { params: { handle: string
       availability: product.availableForSale
         ? 'https://schema.org/InStock'
         : 'https://schema.org/OutOfStock',
-      priceCurrency: product.priceRange.minVariantPrice.currencyCode,
-      highPrice: product.priceRange.maxVariantPrice.amount,
-      lowPrice: product.priceRange.minVariantPrice.amount
+      proddetails
+      // modified by Avinash //
+
+      // priceCurrency: product.priceRange.minVariantPrice.currencyCode,
+      // highPrice: product.priceRange.maxVariantPrice.amount,
+      // lowPrice: product.priceRange.minVariantPrice.amount
+      // priceCurrency: product.priceRange.maxVariantPrice.currencyCode,
+      // highPrice: product.priceRange.maxVariantPrice.amount,
     }
   };
 
@@ -81,7 +103,44 @@ export default async function ProductPage({ params }: { params: { handle: string
           __html: JSON.stringify(productJsonLd)
         }}
       />
-      <div className="mx-auto max-w-screen-2xl px-4">
+      <div className="bg-light min-h-screen">
+        <article className="bg-light rounded-lg">
+          <div className="border-border-200 flex flex-col border-b border-opacity-70 md:flex-row">
+            <div className="p-6 pt-10 md:w-1/2 lg:p-14 xl:p-16">
+              <div className="mb-8 flex items-center justify-between lg:mb-10">
+                {/* {backBtn && <BackButton />}
+            {discount && ( */}
+                <div className="text-light rounded-full bg-yellow-500 px-3 text-xs font-semibold leading-6 ltr:ml-auto rtl:mr-auto">
+                  13%
+                </div>
+                {/* )} */}
+              </div>
+
+              <div className="product-gallery h-full">
+                <Gallery
+                  images={product.images.map((image: Image) => ({
+                    src: image.url,
+                    altText: image.altText
+                  }))}
+                />
+                {/* <ThumbsCarousel
+              gallery={previewImages}
+              video={video}
+              hideThumbs={
+                previewImages.length && video?.length
+                  ? false
+                  : previewImages.length <= 1
+              }
+            /> */}
+              </div>
+            </div>
+            <div className="flex flex-col items-start p-5 pt-10 md:w-1/2 lg:p-14 xl:p-16">
+              <ProductDescription product={product} />
+            </div>
+          </div>
+        </article>
+      </div>
+      {/* <div className="mx-auto max-w-screen-2xl px-4">
         <div className="flex flex-col rounded-lg border border-neutral-200 bg-white p-8 dark:border-neutral-800 dark:bg-black md:p-12 lg:flex-row">
           <div className="h-full w-full basis-full lg:basis-4/6">
             <Gallery
@@ -99,7 +158,7 @@ export default async function ProductPage({ params }: { params: { handle: string
         <Suspense>
           <RelatedProducts id={product.id} />
         </Suspense>
-      </div>
+      </div> */}
       <Suspense>
         <Footer />
       </Suspense>
@@ -108,7 +167,8 @@ export default async function ProductPage({ params }: { params: { handle: string
 }
 
 async function RelatedProducts({ id }: { id: string }) {
-  const relatedProducts = await getProductRecommendations(id);
+  // const relatedProducts = await getProductRecommendations(id);
+  const relatedProducts: any[] = [];
 
   if (!relatedProducts.length) return null;
 

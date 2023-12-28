@@ -15,22 +15,27 @@ export function AddToCart({
   variants: ProductVariant[];
   availableForSale: boolean;
 }) {
+  console.log('variants===============================>', variants);
+  console.log('availableForSale=========================>', availableForSale);
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
-  const defaultVariantId = variants.length === 1 ? variants[0]?.id : undefined;
-  const variant = variants.find((variant: ProductVariant) =>
-    variant.selectedOptions.every(
-      (option) => option.value === searchParams.get(option.name.toLowerCase())
-    )
-  );
+  let defaultVariantId = variants.length > 0 ? variants[0]?.id : undefined;
+  const variant =
+    variants.length > 0
+      ? variants.find((variant: ProductVariant) =>
+          variant.selectedOptions.every(
+            (option) => option.value === searchParams.get(option.name.toLowerCase())
+          )
+        )
+      : { id: '98909' };
   const selectedVariantId = variant?.id || defaultVariantId;
   const title = !availableForSale
     ? 'Out of stock'
     : !selectedVariantId
     ? 'Please select options'
     : undefined;
-
+  console.log('selectedVariantId================>', selectedVariantId);
   return (
     <button
       aria-label="Add item to cart"

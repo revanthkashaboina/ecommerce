@@ -3,6 +3,11 @@ export interface ShopifyErrorLike {
   message: Error;
 }
 
+export interface MedusaErrorLike {
+  status: number;
+  message: Error;
+}
+
 export const isObject = (object: unknown): object is Record<string, unknown> => {
   return typeof object === 'object' && object !== null && !Array.isArray(object);
 };
@@ -14,6 +19,16 @@ export const isShopifyError = (error: unknown): error is ShopifyErrorLike => {
 
   return findError(error);
 };
+// For Medusa //
+export const isMedusaError = (error: unknown): error is MedusaErrorLike => {
+  if (!isObject(error)) return false;
+
+  if (error instanceof Error) return true;
+
+  return findError(error);
+};
+
+// End Medusa //
 
 function findError<T extends object>(error: T): boolean {
   if (Object.prototype.toString.call(error) === '[object Error]') {

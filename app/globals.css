@@ -19,3 +19,44 @@ input,
 button {
   @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-50 dark:focus-visible:ring-neutral-600 dark:focus-visible:ring-offset-neutral-900;
 }
+
+.hit {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+  background-color: #fff;
+  padding: 1rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.ais-Hits-list {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.ais-Hits-item {
+  padding: 1rem !important;
+}
+
+.hit {
+  align-items: center;
+  display: grid;
+  gap: 1rem;
+}
+
+.hit h1 {
+  font-size: 1rem;
+}
+
+.hit p {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.hit-image {
+  align-items: center;
+  display: flex;
+  height: 100px;
+  justify-content: center;
+}

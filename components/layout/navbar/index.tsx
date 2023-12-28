@@ -1,16 +1,27 @@
+//  'use client'
 import Cart from 'components/cart';
 import OpenCart from 'components/cart/open-cart';
-import LogoSquare from 'components/logo-square';
-import { getMenu } from 'lib/shopify';
+// import { getMenu } from 'lib/backendUtils';
 import { Menu } from 'lib/shopify/types';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Suspense } from 'react';
+import Logo from '../../icons/cwsuite-logo.webp';
 import MobileMenu from './mobile-menu';
 import Search from './search';
+//===================================================================================================
+import Autocomplete from '../../products/Autocomplete';
+import { connectAutoComplete } from 'react-instantsearch-dom';
+
+const CustomAutocomplete = connectAutoComplete(Autocomplete);
+// console.log(CustomAutocomplete);
+
+//===================================================================================================
 const { SITE_NAME } = process.env;
 
-export default async function Navbar() {
-  const menu = await getMenu('next-js-frontend-header-menu');
+export default function Navbar() {
+  // const menu = await getMenu('next-js-frontend-header-menu');
+  const menu: any = [];
 
   return (
     <nav className="relative flex items-center justify-between p-4 lg:px-6">
@@ -24,9 +35,10 @@ export default async function Navbar() {
             aria-label="Go back home"
             className="mr-2 flex w-full items-center justify-center md:w-auto lg:mr-6"
           >
-            <LogoSquare />
+            {/* <LogoSquare /> */}
             <div className="ml-2 flex-none text-sm font-medium uppercase md:hidden lg:block">
-              {SITE_NAME}
+              {/* {SITE_NAME} */}
+              <Image src={Logo} alt="logo" priority={true} />
             </div>
           </Link>
           {menu.length ? (
@@ -45,6 +57,7 @@ export default async function Navbar() {
           ) : null}
         </div>
         <div className="hidden justify-center md:flex md:w-1/3">
+          {/* <CustomAutocomplete /> */}
           <Search />
         </div>
         <div className="flex justify-end md:w-1/3">

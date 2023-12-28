@@ -1,12 +1,16 @@
 import type { Metadata } from 'next';
 
 import Prose from 'components/prose';
-import { getPage } from 'lib/shopify';
+// import { getPage } from 'lib/shopify';
+// import { getPage } from 'lib/backendUtils';
+import { getPage } from 'lib/cwcommerce';
 import { notFound } from 'next/navigation';
 
-export const runtime = 'edge';
+// export const runtime = 'edge';
+export const runtime = 'nodejs';
 
-export const revalidate = 43200; // 12 hours in seconds
+// export const revalidate = 43200; // 12 hours in seconds
+export const revalidate = 60; // 12 hours in seconds
 
 export async function generateMetadata({
   params
@@ -14,7 +18,6 @@ export async function generateMetadata({
   params: { page: string };
 }): Promise<Metadata> {
   const page = await getPage(params.page);
-
   if (!page) return notFound();
 
   return {

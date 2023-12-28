@@ -1,4 +1,6 @@
-import { getCollections, getPages, getProducts } from 'lib/shopify';
+// import { getCollections, getPages, getProducts } from 'lib/shopify';
+// import { getCollections, getPages, getProducts } from 'lib/backendUtils';
+
 import { MetadataRoute } from 'next';
 
 type Route = {
@@ -16,34 +18,34 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date().toISOString()
   }));
 
-  const collectionsPromise = getCollections().then((collections) =>
-    collections.map((collection) => ({
-      url: `${baseUrl}${collection.path}`,
-      lastModified: collection.updatedAt
-    }))
-  );
+  // const collectionsPromise = getCollections().then((collections:any) =>
+  //   collections.map((collection:any) => ({
+  //     url: `${baseUrl}${collection.path}`,
+  //     lastModified: collection.updatedAt
+  //   }))
+  // );
 
-  const productsPromise = getProducts({}).then((products) =>
-    products.map((product) => ({
-      url: `${baseUrl}/product/${product.handle}`,
-      lastModified: product.updatedAt
-    }))
-  );
+  // const productsPromise = getProducts({}).then((products:any) =>
+  //   products.map((product:any) => ({
+  //     url: `${baseUrl}/product/${product.handle}`,
+  //     lastModified: product.updatedAt
+  //   }))
+  // );
 
-  const pagesPromise = getPages().then((pages) =>
-    pages.map((page) => ({
-      url: `${baseUrl}/${page.handle}`,
-      lastModified: page.updatedAt
-    }))
-  );
+  // const pagesPromise = getPages().then((pages:any) =>
+  //   pages.map((page:any) => ({
+  //     url: `${baseUrl}/${page.handle}`,
+  //     lastModified: page.updatedAt
+  //   }))
+  // );
 
   let fetchedRoutes: Route[] = [];
 
-  try {
-    fetchedRoutes = (await Promise.all([collectionsPromise, productsPromise, pagesPromise])).flat();
-  } catch (error) {
-    throw JSON.stringify(error, null, 2);
-  }
+  // try {
+  //   fetchedRoutes = (await Promise.all([collectionsPromise, productsPromise, pagesPromise])).flat();
+  // } catch (error) {
+  //   throw JSON.stringify(error, null, 2);
+  // }
 
   return [...routesMap, ...fetchedRoutes];
 }
